@@ -50,19 +50,24 @@ export const loginUser = async (req, res) => {
 };
 
 export const checkAuth = async (req, res) => {
-  const token = req.cookies.token;
-  if (!token) {
-    return res.status(401).json({ message: "No token found, please log in" });
-  }
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
-    res.status(200).json({ message: "User authenticated" }); 
+    const token = req.cookies.token;
+    
+    if (!token) {
+      return res.status(401).json({ message: "No token found, please log in" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    return res.status(200).json({ 
+      message: "User authenticated",
+      user: decoded 
+    });
   } 
   catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
-
 export const userLogOut = async (req, res) => {
   res.clearCookie('token');
   res.json({message:'User logged out'})

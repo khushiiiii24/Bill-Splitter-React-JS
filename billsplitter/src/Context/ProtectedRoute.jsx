@@ -1,34 +1,36 @@
-import React from 'react'
-import { createContext, useState, useEffect } from 'react'
+import React, { createContext, useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import Instance from '../AxiosConfig';
-import {useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthProvider';
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
-function ProtectedRoute({children}) {
-    const navigate=useNavigate();
-    const {setIsAuthenticated, isAuthenticated} = useAuth();
-    // const [isAuthenticated, setIsAuthenticated] = useState(false);
+function ProtectedRoute({ children }) {
+    const { isAuthenticated, setIsAuthenticated } = useAuth(); 
+
     useEffect(() => {
-        checkAuth()
-    }, []);
-    const checkAuth = async () => {
-        try {
-            const response = await Instance.get("/auth/checkToken")
-            if (response.status === 200) {
-                setIsAuthenticated(true)
-
+        const checkAuth = async () => {
+            try {
+                const response = await Instance.get("/auth/checkToken");
+                if (response.status === 200) {
+                    setIsAuthenticated(true);
+                } else {
+                    setIsAuthenticated(false);
+                }
+            } catch (error) {
+                console.log("Error found:", error);
+                setIsAuthenticated(false);
             }
-        } catch (error) {
-            console.log("error found");
-            setIsAuthenticated(false);
-        }
+        };
+
+        checkAuth();
+    }, [setIsAuthenticated]); 
+
+    if (isAuthenticated === null) {
+        return <div>Loading...</div>; 
     }
 
-    return (
-        isAuthenticated ? children : <navigate to="/" />
-    )
+    return isAuthenticated ? children : <Navigate to="/" replace />;
 }
 
-export default ProtectedRoute;
+export default ProtectedRoute;

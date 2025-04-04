@@ -10,7 +10,9 @@ function Bill() {
 
   useEffect(() => {
     if (billSplit > 0) {
-      setPerPersonAmount((Number(total) + Number(totalTipBalance)) / Number(billSplit));
+      setPerPersonAmount(
+        (Number(total) + Number(totalTipBalance)) / Number(billSplit)
+      );
     } else {
       setPerPersonAmount(0);
     }
@@ -19,6 +21,7 @@ function Bill() {
   function handleSetTip(e) {
     const percentage = parseInt(e.target.innerText);
     setTip(percentage);
+    setCustomTip(percentage);
     if (customTip === "") setCustomTip(percentage); // Only set if no custom tip
   }
 
@@ -49,7 +52,9 @@ function Bill() {
               id="bill-amount"
               type="number"
               value={total}
-              onChange={(e) => setTotal(e.target.value === "" ? "" : Number(e.target.value))}
+              onChange={(e) =>
+                setTotal(e.target.value === "" ? "" : Number(e.target.value))
+              }
             />
           </div>
 
@@ -67,7 +72,9 @@ function Bill() {
             type="number"
             placeholder="Custom Tip in Percent"
             value={customTip}
-            onChange={(e) => setCustomTip(e.target.value === "" ? "" : Number(e.target.value))}
+            onChange={(e) =>
+              setCustomTip(e.target.value === "" ? "" : Number(e.target.value))
+            }
           />
 
           <p className="numberofpeople">Number of People</p>
@@ -76,7 +83,9 @@ function Bill() {
             type="number"
             placeholder="Number of people"
             value={billSplit}
-            onChange={(e) => setBillSplit(e.target.value === "" ? "" : Number(e.target.value))}
+            onChange={(e) =>
+              setBillSplit(e.target.value === "" ? "" : Number(e.target.value))
+            }
           />
 
           <button className="generate-btn" onClick={handlePrint}>
@@ -104,4 +113,4 @@ function Bill() {
   );
 }
 
-export default Bill;
+export default Bill;
