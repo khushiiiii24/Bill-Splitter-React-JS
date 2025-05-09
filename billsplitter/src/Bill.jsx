@@ -2,33 +2,32 @@ import React, { useEffect, useState } from "react";
 
 function Bill() {
   const [tip, setTip] = useState(0);
-  const [customTip, setCustomTip] = useState(""); // Allows blank input
-  const [total, setTotal] = useState(""); // Allows blank input
+  const [customTip, setCustomTip] = useState("");
+  const [total, setTotal] = useState("");
   const [billSplit, setBillSplit] = useState("");
   const [perPersonAmount, setPerPersonAmount] = useState(0);
   const [totalTipBalance, setTotalTipBalance] = useState(0);
+  const [isGenerated, setIsGenerated] = useState(false);
 
   useEffect(() => {
-    if (billSplit > 0) {
+    if (billSplit > 0 && isGenerated) {
       setPerPersonAmount(
         (Number(total) + Number(totalTipBalance)) / Number(billSplit)
       );
-    } else {
-      setPerPersonAmount(0);
     }
-  }, [billSplit, total, totalTipBalance]);
+  }, [billSplit, total, totalTipBalance, isGenerated]);
 
   function handleSetTip(e) {
     const percentage = parseInt(e.target.innerText);
     setTip(percentage);
     setCustomTip(percentage);
-    if (customTip === "") setCustomTip(percentage); // Only set if no custom tip
   }
 
   function handlePrint() {
     const calculatedTip = (Number(total) * Number(customTip)) / 100;
     setTotalTipBalance(calculatedTip);
     setPerPersonAmount((Number(total) + calculatedTip) / Number(billSplit));
+    setIsGenerated(true);
   }
 
   function resetBtn() {
@@ -38,6 +37,7 @@ function Bill() {
     setBillSplit("");
     setPerPersonAmount(0);
     setTotalTipBalance(0);
+    setIsGenerated(false);
   }
 
   return (
@@ -95,13 +95,13 @@ function Bill() {
 
         <div className="bill-output">
           <p className="tip-amount">
-            Tip Amount<span>₹{totalTipBalance.toFixed(2)}</span>
+            Tip Amount<span>₹{isGenerated ? totalTipBalance.toFixed(2) : "0.00"}</span>
           </p>
           <p className="total-amount">
-            Total<span>₹{(Number(total) + totalTipBalance).toFixed(2)}</span>
+            Total<span>₹{isGenerated ? (Number(total) + totalTipBalance).toFixed(2) : "0.00"}</span>
           </p>
           <p className="each-person-bill">
-            Each Person Bill<span>₹{perPersonAmount.toFixed(2)}</span>
+            Each Person Bill<span>₹{isGenerated ? perPersonAmount.toFixed(2) : "0.00"}</span>
           </p>
 
           <button className="reset-btn" onClick={resetBtn}>
